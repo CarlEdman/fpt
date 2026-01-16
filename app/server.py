@@ -4,7 +4,8 @@ import uvicorn
 import sqlmodel
 
 from fastapi import FastAPI, WebSocket, Depends, HTTPException, Query
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic_settings import BaseSettings
 from typing import Annotated
 from sqlmodel import Field, Session, SQLModel
@@ -26,8 +27,14 @@ SessionDep = Annotated[Session, Depends(get_session)]
 app = FastAPI(lifespan=lifespan)
 engine = sqlmodel.create_engine(settings.fpt_sqlurl, connect_args={"check_same_thread": False})
 
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+@app.get("/favicon.ico")
+async def favicon() -> FileResponse:
+  return FileResponse("static/favicon.ico")
+
 @app.get("/")
-async def root():
+async def root() -> HTMLResponse:
   return HTMLResponse("""
 <!DOCTYPE html>
 <html>
