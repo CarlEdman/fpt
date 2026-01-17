@@ -1,5 +1,4 @@
-#FROM ghcr.io/astral-sh/uv:alpine
-FROM python:3.13-slim-trixie
+FROM ghcr.io/astral-sh/uv:alpine
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
 # Copy the project into the image
@@ -14,5 +13,7 @@ ENV FPT_PORT=7777
 # Sync the project into a new environment, asserting the lockfile is up to date
 WORKDIR /app
 RUN uv sync --locked
+
+EXPOSE 7777
 
 CMD ["uv", "run", "src/server.py"]
